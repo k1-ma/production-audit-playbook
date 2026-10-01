@@ -12,6 +12,13 @@ they assume it and refer back to it.
 The first keeps an agent inside the job it was given. The second is the difference
 between an audit and a plausible essay about your codebase.
 
+"Prove, do not guess" never bends. "Fix, do not redesign" has exactly one exception, and
+it is deliberate: when the product's own ceiling is the problem, a parity audit will pass
+a surface the owner considers unfinished, and the bar has to become absolute. That case
+has its own pass, which revokes the rule explicitly rather than quietly —
+[when the ceiling itself is too low](#when-the-ceiling-itself-is-too-low). Everywhere else,
+and by default, the rule holds.
+
 ---
 
 ## Hard constraints
@@ -31,10 +38,12 @@ control → handler → query/mutation → API → SQL → response → render
 A control that is wired to a handler proves nothing. The trace has to reach a visible
 effect, or the finding is that it does not.
 
-**2. Existing design is not the subject.** Proposals are deltas against the current
-layout, not replacements for it. Anything that needs a redesign is tagged
-`needs-redesign` and handed to the owner without further work. See
-[run modes](#run-modes) for the exact boundary.
+**2. Existing design is not the subject** — in passes 1 through 4. Proposals are deltas
+against the current layout, not replacements for it. Anything that needs a redesign is
+tagged `needs-redesign` and handed to the owner without further work. See
+[run modes](#run-modes) for the exact boundary, and
+[pass 5](prompts/5-absolute-bar.md) for the one case where this constraint is lifted on
+purpose.
 
 **3. Project rules are the frame, not the topic.** Whatever architectural rules your
 repo has, every proposal must already comply with them. An agent that discovers a

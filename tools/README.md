@@ -82,7 +82,7 @@ component for an hour, or count the rendered rows and the distinct rendered rows
 seconds.
 
 ```bash
-node repeats.mjs /journal --wait 7000
+node repeats.mjs /orders --wait 7000
 ```
 
 It finds the repeating element without being told its class — the class shared by the most

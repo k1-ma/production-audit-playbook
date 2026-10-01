@@ -90,11 +90,18 @@ templates/
   coverage.md           the coverage ledger
   regression.md         status of every previous finding, with proof
   finding.md            one finding, with a worked example
-  report-set/           the deliverable skeleton
+  report-set/           the deliverable skeleton — coverage, regression and
+                        unverified exist by default, because those three are
+                        what get dropped and what make the rest trustworthy
 tools/
-  shot.mjs              full-page capture with click chains, console errors and
+  shot.mjs              full-page capture with click chains; console errors and
                         failing requests recorded per shot
   contrast.mjs          contrast over the composited translucent background stack
+  probe.mjs             computed values, named tokens, and the opacity
+                        accumulated up the ancestor chain
+  repeats.mjs           finds the repeating row without being told its class;
+                        built to disprove a claim about a list
+  compress.mjs          a screenshot set small enough that someone opens it
   README.md             capture rules, and the instrument errors kept on purpose
 ```
 
@@ -114,15 +121,15 @@ problem produces a tidy report about the wrong thing.
 ## How to use it
 
 1. Read [`METHOD.md`](METHOD.md). The prompts assume it.
-2. Pick the pass that matches what you actually need. They are different jobs — running
-   the correctness prompt when your problem is "the product feels unfinished" produces a
-   tidy report about the wrong thing.
+2. Pick the pass from the table above.
 3. Decide the run mode before starting, and say it out loud in the prompt: research-only,
    or research plus safe fixes. An agent that has not been told will choose for you.
 4. Fill the domain list in the prompt with your own modules. The prompts ship with the
    shape, not with someone else's product.
 5. Fan out one agent per domain, then run a synthesizer over the results. A single agent
    over a large codebase produces coverage theatre.
+6. Keep the coverage ledger as you go, not at the end. Filled in afterwards it records
+   what you remember visiting, which is the thing it exists to catch.
 
 ## Scope and honesty
 
