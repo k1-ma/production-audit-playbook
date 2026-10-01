@@ -1,0 +1,22 @@
+{
+  "name": "production-audit-playbook",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A method for auditing a large, live codebase with coding agents, with the instruments it needs.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "setup": "playwright install chromium",
+    "shot": "node tools/shot.mjs",
+    "contrast": "node tools/contrast.mjs",
+    "probe": "node tools/probe.mjs",
+    "repeats": "node tools/repeats.mjs",
+    "compress": "node tools/compress.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}

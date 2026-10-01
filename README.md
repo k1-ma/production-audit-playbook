@@ -25,14 +25,14 @@ The failures shaped every rule here:
 | 1 | Correctness: bugs, security holes, layer drift | Agents reported plausible findings they had not verified → **every claim carries `path:line`** |
 | 2 | Product feel: dead controls, screens that lie | Agents confirmed the complaints and stopped → **seed → generalized rule** |
 | 3 | Total line-by-line sweep | Agents skimmed familiar files and declared coverage → **the coverage ledger** |
-| 4 | Design parity against a reference | Measurement tools were themselves wrong → **instrument errors stay in the record** |
-| 5 | Redesign proposals | Agents "fixed" things nobody asked to change → **run modes and list A / list B** |
+| 4 | Parity against the product's own ceiling | Measurement tools were themselves wrong → **instrument errors stay in the record** |
+| 5 | Redesign, where the ceiling was the problem | A progress table said `DONE` while nothing had changed on screen → **reconcile claims against the artifact, not the diff** |
 
 Nothing here is theoretical. Every rule exists because its absence cost a pass.
 
 ---
 
-## The five ideas worth stealing
+## The six ideas worth stealing
 
 **1. Seed → generalized rule.** A user complaint is not a checklist item. It is the seed
 of a pattern. "The theme switcher does nothing" becomes *trace every settings control to
@@ -62,23 +62,54 @@ twenty findings. The synthesis step exists to find those, and the summary leads 
 them. A flat list of four hundred issues is not an audit result; it is raw material.
 → [`METHOD.md`](METHOD.md#synthesis)
 
+**6. Is the number on screen true?** A separate axis from "does it work", with its own
+five-class grading: an honest placeholder, a fallback that looks like live data, something
+that was true once, something invented, and the same figure disagreeing with itself in two
+places. Nothing else in a normal review process asks this, and on a public surface an
+invented number is a P0. → [`FINDINGS.md`](FINDINGS.md#data-truthfulness)
+
 ---
 
 ## What is in here
 
 ```
-METHOD.md              the method: principles, run modes, the two ledgers,
-                       seed → rule, fan-out, completion criteria
-FINDINGS.md            finding format, severity, status vocabulary, ID scheme
+METHOD.md               the method: principles, run modes, the two ledgers,
+                        seed → rule, deriving the reference, six passes,
+                        fan-out, agent anti-patterns, completion criteria
+FINDINGS.md             finding format, severity, status vocabulary, data
+                        truthfulness classes, tiers, scoring, ID scheme
 prompts/
-  1-correctness.md     bugs, security, layer drift, feature parity
-  2-product-feel.md    dead controls, lying surfaces, leaked internals, shallow features
-  3-full-sweep.md      line-by-line coverage: discovery, baseline, six passes per domain
+  1-correctness.md      bugs, security, layer drift, feature parity
+  2-product-feel.md     dead controls, lying surfaces, leaked internals, shallow features
+  3-full-sweep.md       line-by-line coverage: discovery, baseline, six passes per domain
+  4-internal-parity.md  design · capability · data truthfulness, measured against the
+                        product's own best pages
+  5-absolute-bar.md     block-level redesign, for when the product's own ceiling is
+                        the problem
 templates/
-  coverage.md          the coverage ledger
-  regression.md        status of every previous finding, with proof
-  finding.md           one finding
+  coverage.md           the coverage ledger
+  regression.md         status of every previous finding, with proof
+  finding.md            one finding, with a worked example
+  report-set/           the deliverable skeleton
+tools/
+  shot.mjs              full-page capture with click chains, console errors and
+                        failing requests recorded per shot
+  contrast.mjs          contrast over the composited translucent background stack
+  README.md             capture rules, and the instrument errors kept on purpose
 ```
+
+### Which pass
+
+| You want to know | Pass |
+| --- | --- |
+| What is broken, unsafe, or out of sync between layers | [1](prompts/1-correctness.md) |
+| Why the product feels unfinished | [2](prompts/2-product-feel.md) |
+| Everything, with proven coverage and measured baselines | [3](prompts/3-full-sweep.md) |
+| Which screens lag behind our own best ones, and whether the numbers are true | [4](prompts/4-internal-parity.md) |
+| What to do when our best is not good enough | [5](prompts/5-absolute-bar.md) |
+
+Passes 1–3 and 4–5 answer different questions. Running a correctness prompt at a quality
+problem produces a tidy report about the wrong thing.
 
 ## How to use it
 

@@ -78,6 +78,50 @@ And one that ordinary reports miss entirely:
 
 ---
 
+## Data truthfulness
+
+A separate grading, because "is the number on screen true?" is not a severity question and
+every hit needs a class before it can be scheduled. Every number, label, chart and image is
+traced to its source; untraceable is itself a finding.
+
+| Class | What it is | What to do |
+| --- | --- | --- |
+| **LEGIT** | An honest fallback nobody would mistake for fact — an avatar placeholder, an example inside a hint, a clearly labelled demo | Not a finding, but record it in the register |
+| **FALLBACK-LIE** | The fallback looks like live data: plausible numbers, no label, the user believes it | **Finding, P1 minimum** |
+| **STALE** | It was true once — outdated screenshots, prices, plans, "last updated" | Finding |
+| **FAKE** | There is no data and never was; the number is invented | **P0 on a public surface** |
+| **DRIFT** | The same number lives in two places and they disagree — page vs API, marketing vs product, one service vs another | Finding, and name the source of truth |
+
+`LEGIT` has to be in the list. Without it, an agent either files every placeholder as a
+defect or quietly drops the ones it judged harmless — and you cannot tell which.
+
+Every truthfulness finding records four things beyond the usual: **what the user sees**,
+**what they will believe**, **what disproves it** (`path:line` plus the actual network
+response), and **the cost of the error** — reputation, support load, or a money decision
+made on a false number.
+
+## Tiers
+
+For quality passes, a per-screen grade alongside the per-finding one. Findings tell you what
+to fix; tiers tell you where to look.
+
+| Tier | Meaning |
+| --- | --- |
+| **S** | The reference. The ruler, not the object of work |
+| **A** | Minor divergence from the reference |
+| **B** | Noticeably behind |
+| **C** | Looks like it came from an earlier era of the product |
+| **D** | Looks unfinished — embarrassing to show |
+
+Scoring for quality findings, where severity alone does not order the work:
+
+**Score = Impact × Visibility ÷ Effort**, each 1–5. A public surface on the main path is
+visibility 5; an admin sub-screen is 1. The useful cuts that fall out of this are "cheap and
+highly visible" and "expensive but changes how the product feels" — and both rank below
+**systemic** findings, which are fixed once and reach many screens.
+
+---
+
 ## ID scheme
 
 A short domain prefix plus a number: `T-4`, `SEC-2`, `PERF-11`. Assign prefixes to your

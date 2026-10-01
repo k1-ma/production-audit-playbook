@@ -176,11 +176,20 @@ Every previous finding of high severity gets a current status, proven against th
 `FIXED` (with commit or `path:line`), `OPEN` (still reproducing, with location),
 `PARTIAL` (fixed for X, not for Y).
 
-Two rules make it useful:
+Three rules make it useful:
 
 - An `OPEN` finding is not re-described. `ID + one line + current path:line`.
 - A `FIXED` finding is checked for **what the fix broke**. The recurring case: someone
   corrects a cache invalidation and creates a refetch storm.
+- **A `DONE` claim is reconciled against the artifact, not against the diff that claimed
+  it.** A diff can honestly show a component replaced while the screen looks identical. If
+  a progress table says done and the owner says nothing changed, one of the two is false,
+  and establishing which comes *before* scheduling more work — otherwise the work goes
+  around the same loop a second time. In the passes this came from, the previous plan's one
+  unclosed row was "screenshot QA — cannot be produced from a diff; needs a browser with a
+  session and a database". That row was the entire explanation: everything verifiable from
+  a diff had been marked done, and the one check that required looking at the rendered
+  product had never run.
 
 Template: [`templates/regression.md`](templates/regression.md)
 
@@ -210,6 +219,47 @@ have been run against it — not when the reported problem was confirmed. The us
 examples are the floor. If the audit found only what was pointed at, it failed.
 
 ---
+
+## Deriving the reference
+
+When the question is quality rather than correctness, an audit needs a ruler, or it
+degenerates into "I don't like it". Do not supply the ruler yourself. **Derive it from the
+product's own best pages.**
+
+1. Rank pages by recency and density of work — `git log --since` over the client source is
+   enough to start. Intersect with where the richer shared components are used, where
+   skeleton/empty/error states already exist, and where tests exist.
+2. Pick two to four reference pages and record **why those**, citing code.
+3. Extract the design system *from* them as **actual values** — tokens really in use, the
+   type scale, grid and density, radii and shadows, the full set of control and screen
+   states, motion durations and easing, the accessibility floor. Not principles.
+4. Turn that into a 30–50 point parity checklist where **every item cites a reference
+   `path:line` as its exemplar**.
+5. Do the same for capability: write out the full feature set of the richest entity in the
+   product. That is the product's own maximum, and every other entity is measured against it.
+
+> **The rule that makes this honest: an item you cannot confirm from the reference's own
+> code does not go into the checklist.** That is the entire defense against importing taste
+> from outside and presenting it as an audit finding.
+
+The reference is then **not improved in this pass**. It is the ruler, not the object of
+work. Wanting to change the ruler is a separate finding for the owner.
+
+**Show the reference to the owner before continuing.** If it is wrong, every later step is
+wasted — and that is cheap to discover at step 2 and expensive at step 40.
+
+### When the ceiling itself is too low
+
+A neglected surface can *pass* a parity audit — it is no worse than the best page — while
+the owner looks at it and says it is not good enough. That is a real outcome, not a
+contradiction, and it means the bar has to become absolute for those surfaces: not "worse
+than our best page" but **"would someone paying for this consider this finished"**. Two
+things change with it. Internal parity stops being a defense — *"it's like this everywhere"*
+is an argument against the product, not for the block. And the unit of work drops from the
+page to **the block**, because pages hide their bad blocks behind their good ones.
+
+See [`prompts/5-absolute-bar.md`](prompts/5-absolute-bar.md), which revokes the parity rule
+on purpose.
 
 ## Six passes per domain
 
@@ -298,6 +348,34 @@ was measured as almost black, and produced a page of confident, entirely wrong c
 failures.
 
 ---
+
+## Agent anti-patterns
+
+State these in the prompt as grounds for rejecting the work. Every one of them happened in
+a real pass, and most of them produce a report that looks *better* than an honest one,
+which is why they need naming rather than hoping.
+
+- **A silent coverage limit.** Looked at 12 of 34 screens? Write that in the report header.
+  An unstated sample reads as full coverage — the most expensive lie an audit can tell, and
+  the reason the [coverage ledger](#coverage-ledger) exists.
+- **A count instead of an analysis.** "Found 47 hardcoded values" with no examination of
+  each. Some are legitimate, and saying which ones is the job.
+- **A finding with no `path:line`** or, for anything visual, no visual proof.
+- **Concluding from the code what only production can answer.** "The feed works" from
+  reading the fetch call, without looking at what the endpoint actually returns right now.
+- **Judging an empty screen as a design.** Seed the data first, then look.
+- **A `TODO` filed as a defect** with no statement of what the user experiences.
+- **Mixing two kinds of problem in one finding.** A correctness bug, a UX problem, a
+  subjective visual preference and a product hypothesis are four different things with four
+  different owners. Mixed together they are unschedulable.
+- **A subjective preference presented as a defect.**
+- **"Let me rewrite it in `<library>`."** A delta to what exists, or a replacement for one
+  block — never a replacement for the stack.
+- **Deciding a product question** on the owner's behalf instead of filing
+  `NEEDS PRODUCT DECISION`.
+- **A diagnosis with no replacement**, in a pass whose output is supposed to be a plan.
+- **Marking visual work done without seeing it in the dark theme**, where a token used in
+  the wrong role can read 1.17:1 and the light theme shows nothing wrong.
 
 ## Completion criteria
 

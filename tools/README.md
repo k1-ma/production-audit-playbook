@@ -1,15 +1,18 @@
 # Tools
 
-Two instruments for a visual audit, plus the rules and the mistakes that shaped them.
+Five instruments for a visual audit, plus the rules and the mistakes that shaped them.
 
-Both are single-file Node scripts over Playwright. Neither is a framework — they are
+All are single-file Node scripts over Playwright. None of them is a framework — they are
 short enough to read in one sitting and to fork for your own app, which is the point.
 
 ```bash
-npm i -D @playwright/test && npx playwright install chromium
+npm install && npm run setup
 ```
 
-Everything is passed in. Nothing about a specific app is baked in.
+If a script dies with a module-resolution stack trace instead of printing usage, that is the
+missing dependency — the import runs before the argument check.
+
+Everything else is passed in. Nothing about a specific app is baked in.
 
 | Flag | Environment | Meaning |
 | --- | --- | --- |
@@ -56,6 +59,56 @@ node contrast.mjs jobs.json --base http://localhost:5173 --state ./auth-state.js
 Output splits into `firm` — findings over a solid background, trustworthy — and a
 `painted` count for elements this instrument cannot measure. See the known limitation
 below.
+
+## `probe.mjs`
+
+One element, and why it looks the way it does. Reach for it when a value is correct in the
+source and wrong on screen.
+
+```bash
+node probe.mjs /settings ".field-hint" --props "--fg-muted,--fg-subtle"
+```
+
+It prints the resolved computed values, the named custom properties as they actually
+resolve at that point, and — the one that catches people — **the opacity accumulated up the
+ancestor chain**, with the chain itself. A token can be exactly right while an ancestor
+sits at 0.6, and nothing in the element's own styles says so.
+
+## `repeats.mjs`
+
+Counts what is really in a list, to settle a claim about it. Built to *disprove*: someone
+reports "every row appears twice", and you can either read the query, the mapper and the
+component for an hour, or count the rendered rows and the distinct rendered rows in thirty
+seconds.
+
+```bash
+node repeats.mjs /journal --wait 7000
+```
+
+It finds the repeating element without being told its class — the class shared by the most
+siblings is the row — so it works on an app you have never seen. Reading the output:
+
+| total | uniq | Conclusion |
+| --- | --- | --- |
+| 2 × expected | expected | Genuinely duplicated in the render |
+| expected | expected | The complaint is about something else |
+| expected | < expected | The rows are not distinct — the duplication is in the **data** |
+
+It also prints every API response the page made, because "the list is wrong" and "the
+endpoint returned it wrong" are different findings with different owners.
+
+## `compress.mjs`
+
+Downscales a screenshot tree so the evidence is reviewable. A set at three viewports × two
+themes runs into tens of megabytes of PNG that nobody opens; this takes a real set from
+~27 MB to ~6 MB with no loss that matters for judging a layout.
+
+```bash
+node compress.mjs ./shots            # replaces .png with .jpg
+node compress.mjs ./shots --keep     # leaves the originals
+```
+
+**Destructive by default.** Run it on a copy, or after the shots are committed.
 
 ---
 
